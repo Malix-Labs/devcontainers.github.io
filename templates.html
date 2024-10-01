@@ -6,10 +6,12 @@ sectionid: collection-index-templates
 
 <h1 style="margin-left: auto;margin-right: auto;">Available Dev Container Templates</h1>
 <p style="margin-left: auto;margin-right: auto;">
-    This table contains all official and community-supported <a href="implementors/templates/">Dev Container Templates</a>
-    known at the time of crawling <a href="collections">each registered collection</a>. This list is continuously 
-    updated with the latest available Template information. See the <a href="https://github.com/devcontainers/template-starter">
-    Template quick start repository</a> to add your own!
+    This table contains all official and community-supported <a href="implementors/templates/">Dev Container
+        Templates</a>
+    known at the time of crawling <a href="collections">each registered collection</a>. This list is continuously
+    updated with the latest available Template information. See the <a
+        href="https://github.com/devcontainers/template-starter">
+        Template quick start repository</a> to add your own!
     <br><br>
     Templates listed here will be presented in the UX of <a href="supporting">supporting tools</a>.
     <br><br>
@@ -33,7 +35,7 @@ sectionid: collection-index-templates
         <td class="tg-0lax"><b>Reference</b></td>
         <td class="tg-0lax"><b>Latest Version</b></td>
     </tr>
-    
+
     {% for c in site.data.devcontainer-index.collections %}
     {% for f in c.templates %}
     <tr>
@@ -44,7 +46,7 @@ sectionid: collection-index-templates
         <td class="tg-0lax"><code>{{ f.version | strip_html  }}</code></td>
     </tr>
     {% endfor %}
-    
+
     {% endfor %}
 </table>
 
@@ -53,9 +55,7 @@ sectionid: collection-index-templates
     const collectionTable = document.getElementById('collectionTable');
     const rows = collectionTable.getElementsByTagName('tr');
 
-    searchInput.addEventListener('input', function () {
-        const searchValue = searchInput.value.toLowerCase();
-
+        function updateSearchResults(searchValue) {
         for (let i = 1; i < rows.length; i++) {
             const name = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
             const maintainer = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
@@ -66,5 +66,32 @@ sectionid: collection-index-templates
                 rows[i].style.display = 'none';
             }
         }
+        }
+
+        function getSearchParameter() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('search') || '';
+        }
+
+        function setSearchParameter(value) {
+            const params = new URLSearchParams(window.location.search);
+            if (value) {
+                params.set('search', value);
+            } else {
+                params.delete('search');
+            }
+            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+        }
+
+        searchInput.addEventListener('input', function () {
+            const searchValue = searchInput.value.toLowerCase();
+            setSearchParameter(searchValue);
+            updateSearchResults(searchValue);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchValue = getSearchParameter();
+            searchInput.value = searchValue;
+            updateSearchResults(searchValue);
     });
 </script>

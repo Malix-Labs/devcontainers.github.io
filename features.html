@@ -35,7 +35,7 @@ sectionid: collection-index-features
         <td class="tg-0lax"><b>Reference</b></td>
         <td class="tg-0lax"><b>Latest Version</b></td>
     </tr>
-    
+
     {% for c in site.data.devcontainer-index.collections %}
     {% for f in c.features %}
     {% if f.deprecated != true %}
@@ -48,7 +48,7 @@ sectionid: collection-index-features
     </tr>
     {% endif %}
     {% endfor %}
-    
+
     {% endfor %}
 </table>
 
@@ -57,9 +57,7 @@ sectionid: collection-index-features
     const collectionTable = document.getElementById('collectionTable');
     const rows = collectionTable.getElementsByTagName('tr');
 
-    searchInput.addEventListener('input', function () {
-        const searchValue = searchInput.value.toLowerCase();
-
+        function updateSearchResults(searchValue) {
         for (let i = 1; i < rows.length; i++) {
             const name = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
             const maintainer = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
@@ -71,5 +69,32 @@ sectionid: collection-index-features
                 rows[i].style.display = 'none';
             }
         }
+        }
+
+        function getSearchParameter() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('search') || '';
+        }
+
+        function setSearchParameter(value) {
+            const params = new URLSearchParams(window.location.search);
+            if (value) {
+                params.set('search', value);
+            } else {
+                params.delete('search');
+            }
+            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+        }
+
+        searchInput.addEventListener('input', function () {
+            const searchValue = searchInput.value.toLowerCase();
+            setSearchParameter(searchValue);
+            updateSearchResults(searchValue);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchValue = getSearchParameter();
+            searchInput.value = searchValue;
+            updateSearchResults(searchValue);
     });
 </script>
